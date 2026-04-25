@@ -654,7 +654,7 @@ class BuildConfiguration(object):
                 "unable to determine Windows Server Core base image tag from host system. Specify it explicitly using -basetag command-line flag"
             )
 
-        self.baseImage = "mcr.microsoft.com/windows/servercore:" + self.basetag
+        self.baseImage = "mcr.microsoft.com/windows/server:" + self.basetag
         self.dllSrcImage = WindowsUtils.getDllSrcImage(self.basetag)
         self.prereqsTag = self.basetag + "-vs" + self.visualStudio.name
 
