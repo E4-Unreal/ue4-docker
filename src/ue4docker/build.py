@@ -410,12 +410,14 @@ def build():
                         + config.visualStudio.build_number,
                     ]
 
+                prereqsPlatformArgs = [arg.replace("--isolation=" + config.isolation, "--isolation=hyperv") for arg in config.platformArgs] if config.containerPlatform == "windows" else config.platformArgs
+
                 custom_prerequisites_dockerfile = config.args.prerequisites_dockerfile
                 if custom_prerequisites_dockerfile is not None:
                     builder.build_builtin_image(
                         "ue4-base-build-prerequisites",
                         [config.prereqsTag],
-                        commonArgs + config.platformArgs + prereqsArgs,
+                        commonArgs + prereqsPlatformArgs + prereqsArgs,
                         builtin_name="ue4-build-prerequisites",
                     )
                     builtImages.append("ue4-base-build-prerequisites")
@@ -423,7 +425,7 @@ def build():
                     builder.build_builtin_image(
                         "ue4-build-prerequisites",
                         [config.prereqsTag],
-                        commonArgs + config.platformArgs + prereqsArgs,
+                        commonArgs + prereqsPlatformArgs + prereqsArgs,
                     )
 
                 prereqConsumerArgs = [
@@ -435,7 +437,7 @@ def build():
                     builder.build(
                         "ue4-build-prerequisites",
                         [config.prereqsTag],
-                        commonArgs + config.platformArgs + prereqConsumerArgs,
+                        commonArgs + prereqsPlatformArgs + prereqConsumerArgs,
                         dockerfile_template=custom_prerequisites_dockerfile,
                         context_dir=os.path.dirname(custom_prerequisites_dockerfile),
                     )
@@ -472,11 +474,13 @@ def build():
                     else []
                 )
 
+                sourcePlatformArgs = [arg.replace("--isolation=" + config.isolation, "--isolation=hyperv") for arg in config.platformArgs] if config.containerPlatform == "windows" else config.platformArgs
+
                 builder.build_builtin_image(
                     "ue4-source",
                     mainTags,
                     commonArgs
-                    + config.platformArgs
+                    + sourcePlatformArgs
                     + ue4SourceArgs
                     + credentialArgs
                     + changelistArgs,
